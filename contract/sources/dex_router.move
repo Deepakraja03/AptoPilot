@@ -1,7 +1,6 @@
 module aptopilot::dex_router {
     use std::signer;
-    use aptos_framework::coin::{Self, Coin};
-    use aptos_framework::aptos_coin::AptosCoin;
+    use aptos_framework::coin::Self;
 
     // ================================= Errors ================================= //
     const ERR_INSUFFICIENT_BALANCE: u64 = 1;
@@ -15,7 +14,7 @@ module aptopilot::dex_router {
     public entry fun swap_exact_in<CoinTypeIn, CoinTypeOut>(
         user: &signer,
         amount_in: u64,
-        min_amount_out: u64,
+        _min_amount_out: u64,
     ) {
         assert!(amount_in > 0, ERR_INVALID_AMOUNT);
         
@@ -44,10 +43,10 @@ module aptopilot::dex_router {
 
     /// Execute a DCA swap - called by strategy execution agent
     public entry fun execute_dca_swap<CoinTypeIn, CoinTypeOut>(
-        executor: &signer,
+        _executor: &signer,
         user_addr: address,
         amount_in: u64,
-        min_amount_out: u64,
+        _min_amount_out: u64,
     ) {
         // TODO: Add authorization check - only execution agent can call
         // TODO: Implement actual swap logic with Liquidswap

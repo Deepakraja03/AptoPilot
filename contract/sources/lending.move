@@ -1,14 +1,38 @@
 module aptopilot::lending {
-    use std::error;
-    use std::option::{Self, Option};
-    use std::signer;
-    use std::string;
-    use std::vector;
-
     use aptos_framework::timestamp;
     use aptos_framework::coin;
-    use aptos_std::table::{Self as table, Table};
-
+    use std::signer;
+    use std::table::{Self, Table};
+    
+    fun reserve_address<T>(): address {
+        @aptopilot
+    }
+    
+    // Constants
+    const BPS_DENOM: u64 = 10000;  // Basis points denominator (100% = 10000 bps)
+    const SECONDS_PER_YEAR: u64 = 365 * 24 * 60 * 60;  // Seconds in a year
+    const LTV_BPS: u64 = 8000;  // 80% Loan-to-Value ratio in basis points
+    const LIQ_THRESHOLD_BPS: u64 = 8000;  // 80% Liquidation threshold
+    
+    /// Internal function to accrue interest
+    fun accrue_internal<T>(reserve: &mut Reserve<T>) {
+        let now = timestamp::now_seconds();
+        let last = reserve.last_accrued_ts;
+        if (now <= last) return;
+        
+        let time_elapsed = (now - last) as u128;
+        if (time_elapsed == 0) return;
+        
+        // Calculate interest (simple interest: principal * rate * time)
+        if (reserve.total_borrowed > 0) {
+            let interest = (reserve.total_borrowed * (reserve.borrow_rate_bps as u128) * time_elapsed) / ((BPS_DENOM as u128) * (SECONDS_PER_YEAR as u128));
+            reserve.total_borrowed = reserve.total_borrowed + interest;
+        };
+        
+        // Update the timestamp
+        reserve.last_accrued_ts = now;
+    }
+    
     /// Errors
     const E_NOT_ADMIN: u64 = 1;
     const E_MARKET_EXISTS: u64 = 2;
@@ -19,14 +43,6 @@ module aptopilot::lending {
     const E_NOT_ENOUGH_DEBT: u64 = 7;
 
     /// Collateral parameters (Aave-inspired, simplified)
-    /// LTV = 75% (in bps)
-    const LTV_BPS: u64 = 7500;
-    /// Liquidation threshold = 80% (bps)
-    const LIQ_THRESHOLD_BPS: u64 = 8000;
-    /// Basis points denominator
-    const BPS_DENOM: u64 = 10000;
-    /// Seconds in a year for interest accrual
-    const SECONDS_PER_YEAR: u64 = 31_536_000; // 365 days
 
     /// Admin for the protocol
     struct Config has key {
@@ -47,9 +63,9 @@ module aptopilot::lending {
         /// Annual interest rate in bps applied to borrows (e.g. 500 = 5%)
         borrow_rate_bps: u64,
         /// Last timestamp we accrued interest
-        last_accrue_ts: u64,
+        last_accrued_ts: u64,
         /// User positions table
-        positions: Table<address, UserPosition>,
+        positions: table::Table<address, UserPosition>,
     }
 
     /// User position (single asset, simplified)
@@ -75,12 +91,12 @@ module aptopilot::lending {
         let cfg = borrow_global<Config>(@aptopilot);
         assert!(signer::address_of(admin) == cfg.admin, E_NOT_ADMIN);
         assert!(!exists<Reserve<T>>(cfg.admin), E_MARKET_EXISTS);
-        let positions: Table<address, UserPosition> = table::new<address, UserPosition>();
+        let positions = table::new<address, UserPosition>();
         move_to(admin, Reserve<T> {
             total_supplied: 0,
             total_borrowed: 0,
             borrow_rate_bps,
-            last_accrue_ts: timestamp::now_seconds(),
+            last_accrued_ts: timestamp::now_seconds(),
             positions,
         });
         if (!exists<Vault<T>>(cfg.admin)) {
@@ -89,63 +105,79 @@ module aptopilot::lending {
     }
 
     /// Enable or disable collateral for the caller for asset T
-    public entry fun set_collateral<T>(user: &signer, enabled: bool) acquires Reserve {
+    public entry fun set_collateral<T>(user: &signer, enabled: bool) acquires Reserve, Config {
+        let user_addr = signer::address_of(user);
         let admin_addr = get_admin();
         let reserve = borrow_global_mut<Reserve<T>>(admin_addr);
         accrue_internal<T>(reserve);
-        let addr = signer::address_of(user);
-        let mut pos = read_or_default(&reserve.positions, addr);
+        let pos = read_or_default(&reserve.positions, user_addr);
         pos.collateral_enabled = enabled;
-        table::upsert(&mut reserve.positions, addr, pos);
+        table::upsert(&mut reserve.positions, user_addr, pos);
     }
 
     /// Supply coins to the market
-    public entry fun supply<T>(user: &signer, mut coins: coin::Coin<T>) acquires Reserve, Vault {
+    public entry fun supply<T>(user: &signer, amount: u64) acquires Reserve, Vault, Config {
+        let user_addr = signer::address_of(user);
         let admin_addr = get_admin();
         let reserve = borrow_global_mut<Reserve<T>>(admin_addr);
+        
+        // Update interest before any state changes
         accrue_internal<T>(reserve);
+        
+        // Withdraw coins from user
+        let coins = coin::withdraw<T>(user, amount);
+        
+        // Add to user's supply position
+        let pos = read_or_default(&reserve.positions, user_addr);
+        pos.supplied = pos.supplied + (amount as u128);
+        table::upsert(&mut reserve.positions, user_addr, pos);
+        
+        // Update total supply
+        reserve.total_supplied = reserve.total_supplied + (amount as u128);
+        
+        // deposit into vault
         let vault = borrow_global_mut<Vault<T>>(admin_addr);
-
-        let amount = coin::value(&coins) as u128;
-        // move user coins into vault
         coin::merge(&mut vault.coins, coins);
-
-        // record position
-        let addr = signer::address_of(user);
-        let mut pos = read_or_default(&reserve.positions, addr);
-        pos.supplied = pos.supplied + amount;
-        table::upsert(&mut reserve.positions, addr, pos);
-
-        reserve.total_supplied = reserve.total_supplied + amount;
     }
 
     /// Withdraw coins from the market (up to your supply minus any locked collateral)
-    public entry fun withdraw<T>(user: &signer, amount: u64) acquires Reserve, Vault {
+    public entry fun withdraw<T>(user: &signer, amount: u64) acquires Reserve, Vault, Config {
         let admin_addr = get_admin();
         let reserve = borrow_global_mut<Reserve<T>>(admin_addr);
         accrue_internal<T>(reserve);
-        let vault = borrow_global_mut<Vault<T>>(admin_addr);
-
+        
         let addr = signer::address_of(user);
-        let mut pos = read_or_default(&reserve.positions, addr);
+        let pos = read_or_default(&reserve.positions, addr);
         let amount_u128 = amount as u128;
+        
+        // Check if user has enough supply
         assert!(pos.supplied >= amount_u128, E_NOT_ENOUGH_SUPPLY);
 
         // Ensure user remains healthy after withdrawal if borrowing
-        pos.supplied = pos.supplied - amount_u128;
-        assert!(is_healthy(&pos), E_UNDERCOLLATERALIZED);
+        let new_supplied = pos.supplied - amount_u128;
+        let new_pos = UserPosition {
+            supplied: new_supplied,
+            borrowed: pos.borrowed,
+            collateral_enabled: pos.collateral_enabled,
+        };
+        
+        // Check if user remains healthy after withdrawal
+        assert!(is_healthy(&new_pos), E_UNDERCOLLATERALIZED);
 
-        // transfer out from vault
-        let (mut out, remainder) = coin::split(&mut vault.coins, amount);
-        vault.coins = remainder;
-        coin::deposit(user, out);
-
-        table::upsert(&mut reserve.positions, addr, pos);
+        // Update user position
+        table::upsert(&mut reserve.positions, addr, new_pos);
+        
+        // Update total supply
         reserve.total_supplied = reserve.total_supplied - amount_u128;
+        
+        // Transfer from vault to user
+        let vault = borrow_global_mut<Vault<T>>(admin_addr);
+        let out = coin::extract(&mut vault.coins, amount);
+        coin::deposit(addr, out);
     }
 
     /// Borrow from the market
-    public entry fun borrow<T>(user: &signer, amount: u64) acquires Reserve, Vault {
+    public entry fun borrow<T>(user: &signer, amount: u64) acquires Reserve, Vault, Config {
         let admin_addr = get_admin();
         let reserve = borrow_global_mut<Reserve<T>>(admin_addr);
         accrue_internal<T>(reserve);
@@ -155,64 +187,62 @@ module aptopilot::lending {
         assert!(available >= amount, E_INSUFFICIENT_LIQUIDITY);
 
         let addr = signer::address_of(user);
-        let mut pos = read_or_default(&reserve.positions, addr);
+        let pos = read_or_default(&reserve.positions, addr);
 
         // Update debt, then check health
         pos.borrowed = pos.borrowed + (amount as u128);
         assert!(is_healthy(&pos), E_UNDERCOLLATERALIZED);
 
-        // transfer out from vault
-        let (mut out, remainder) = coin::split(&mut vault.coins, amount);
-        vault.coins = remainder;
-        coin::deposit(user, out);
-
+        // Update user position
         table::upsert(&mut reserve.positions, addr, pos);
+
+        // transfer out from vault
+        let out = coin::extract(&mut vault.coins, amount);
+        coin::deposit(signer::address_of(user), out);
         reserve.total_borrowed = reserve.total_borrowed + (amount as u128);
     }
 
-    /// Repay debt to the market
-    public entry fun repay<T>(user: &signer, mut coins: coin::Coin<T>) acquires Reserve, Vault {
+    /// Repay borrowed assets to the market
+    public entry fun repay<T>(user: &signer, amount: u64) acquires Reserve, Vault, Config {
         let admin_addr = get_admin();
         let reserve = borrow_global_mut<Reserve<T>>(admin_addr);
         accrue_internal<T>(reserve);
         let vault = borrow_global_mut<Vault<T>>(admin_addr);
 
         let addr = signer::address_of(user);
-        let mut pos = read_or_default(&reserve.positions, addr);
-        let repay_amount = coin::value(&coins) as u128;
-        assert!(pos.borrowed > 0, E_NOT_ENOUGH_DEBT);
-
-        let applied = if (repay_amount >= pos.borrowed) { pos.borrowed } else { repay_amount };
-        pos.borrowed = pos.borrowed - applied;
-
-        // move coins into vault
+        let pos = read_or_default(&reserve.positions, addr);
+        
+        // Convert amount to u128 for comparison
+        let amount_u128 = (amount as u128);
+        
+        // Calculate how much to repay (can't repay more than borrowed)
+        let repay_amount = if (amount_u128 > pos.borrowed) { pos.borrowed } else { amount_u128 };
+        
+        // Convert back to u64 for the withdraw function
+        let repay_amount_u64 = (repay_amount as u64);
+        
+        // Withdraw coins from user
+        let coins = coin::withdraw<T>(user, repay_amount_u64);
+        
+        // Update user's borrowed amount
+        pos.borrowed = pos.borrowed - repay_amount;
+        
+        // Update total borrowed amount in reserve
+        reserve.total_borrowed = reserve.total_borrowed - repay_amount;
+        
+        // Deposit coins into vault
         coin::merge(&mut vault.coins, coins);
-
+        
+        // Update user's position
         table::upsert(&mut reserve.positions, addr, pos);
-        reserve.total_borrowed = reserve.total_borrowed - applied;
     }
 
-    /// Accrue interest on total borrows (simple annual rate prorated by seconds elapsed)
-    public entry fun accrue_interest<T>(admin: &signer) acquires Reserve, Vault {
-        let cfg = borrow_global<Config>(signer::address_of(admin));
-        assert!(signer::address_of(admin) == cfg.admin, E_NOT_ADMIN);
-        let reserve = borrow_global_mut<Reserve<T>>(cfg.admin);
-        accrue_internal<T>(reserve);
+    /// Manually trigger interest accrual (mostly for testing)
+    public entry fun accrue_interest<T>(_admin: &signer) acquires Reserve, Config {
+        let _cfg = borrow_global<Config>(@aptopilot);
+        let reserve = borrow_global_mut<Reserve<T>>(reserve_address<T>());
+        accrue_internal(reserve);
     }
-
-    /// Internal: accrue interest into total_borrowed (no compounding per-user for simplicity)
-    fun accrue_internal<T>(reserve: &mut Reserve<T>) {
-        let now = timestamp::now_seconds();
-        let last = reserve.last_accrue_ts;
-        if (now <= last) return;
-        let dt = (now - last) as u128;
-        let rate_bps = reserve.borrow_rate_bps as u128;
-        let interest = reserve.total_borrowed * rate_bps * dt / (BPS_DENOM as u128) / (SECONDS_PER_YEAR as u128);
-        reserve.total_borrowed = reserve.total_borrowed + interest;
-        reserve.last_accrue_ts = now;
-    }
-
-    /// Health check: supplied * LTV >= borrowed
     fun is_healthy(pos: &UserPosition): bool {
         if (!pos.collateral_enabled) {
             // If not collateralized, cannot have debt

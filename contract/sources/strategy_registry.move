@@ -166,9 +166,10 @@ module aptopilot::strategy_registry {
 
     /// Mark strategy as executed (called by execution agent)
     public entry fun mark_executed(
-        executor: &signer,
+        _executor: &signer,
         strategy_id: u64,
     ) acquires StrategyRegistry {
+        let _ = _executor;  // Mark as used
         let current_time = timestamp::now_seconds();
         let registry = borrow_global_mut<StrategyRegistry>(@aptopilot);
         
