@@ -1,0 +1,431 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-[#0e0e0e] text-foreground;
+  }
+}
+
+@keyframes jumbleEffect {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  20% {
+    opacity: 0.9;
+    transform: scale(1.02) skew(-1deg);
+  }
+  40% {
+    opacity: 0.8;
+    transform: scale(0.98) skew(1deg);
+  }
+  60% {
+    opacity: 0.9;
+    transform: scale(1.01) skew(-0.5deg);
+  }
+  80% {
+    opacity: 0.95;
+    transform: scale(0.99) skew(0.5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) skew(0);
+  }
+}
+
+.animate-jumble {
+  animation: jumbleEffect 0.5s ease-in-out;
+}
+
+/* Add this to your Tailwind CSS config if you're using Tailwind */
+@layer utilities {
+  .animate-jumble {
+    animation: jumbleEffect 0.3s ease-in-out;
+  }
+}
+
+.radial-gradient {
+  background: radial-gradient(white, transparent);
+}
+
+.custom-gradient {
+  background:
+    /* Vertical with subtle blend */
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 4%,
+      /* Top transparent area */ rgba(0, 0, 0, 0.2) 8%,
+      /* Start of fade-in */ black 12%,
+      /* Full black reached */ black 95%,
+      /* Start of fade-out */ transparent 100% /* Bottom transparent area */
+    ),
+    /* Horizontal gradient */
+      linear-gradient(to right, #5a2411, #fa4c15 30%, #fa4c15 60%, #5a2411);
+  background-size: 100% 100%;
+  min-height: 100vh;
+}
+
+@font-face {
+  font-family: "InstrumentSerif";
+  src: url("/fonts/Instrument_Serif/InstrumentSerif-Regular.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "InstrumentSerif";
+  src: url("/fonts/Instrument_Serif/InstrumentSerif-Italic.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi/Satoshi-Variable.ttf") format("truetype");
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi/Satoshi-VariableItalic.ttf") format("truetype");
+  font-style: italic;
+}
+
+.font-satoshi {
+  font-family: "Satoshi", sans-serif;
+  font-style: normal;
+}
+
+/* Prevent content jumps when interacting with fixed elements */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4rem; /* Adds padding for anchor links to account for fixed header */
+}
+
+body {
+  overflow-x: hidden;
+  overscroll-behavior-y: none; /* Prevents bouncing effect on some browsers */
+}
+
+@keyframes violentGlitch {
+  0% {
+    transform: translate(0);
+    opacity: 1;
+    text-shadow: 0 0 2px #fa4c15;
+  }
+  15% {
+    transform: translate(-5px, 5px) skew(-5deg);
+    opacity: 0.7;
+    text-shadow: 2px 2px 8px #fa4c15;
+  }
+  30% {
+    transform: translate(5px, -5px) skew(5deg);
+    opacity: 0.8;
+    text-shadow: -2px -2px 8px #fa4c15;
+  }
+  45% {
+    transform: translate(-5px, 3px) skew(-3deg);
+    opacity: 0.7;
+    text-shadow: 3px 3px 10px #fa4c15;
+  }
+  60% {
+    transform: translate(5px, -3px) skew(3deg);
+    opacity: 0.8;
+    text-shadow: -3px -3px 10px #fa4c15;
+  }
+  75% {
+    transform: translate(-2px, 2px);
+    opacity: 0.9;
+    text-shadow: 1px 1px 4px #fa4c15;
+  }
+  100% {
+    transform: translate(0);
+    opacity: 1;
+    text-shadow: 0 0 2px #fa4c15;
+  }
+}
+
+@keyframes violentGlitchWhite {
+  0% {
+    transform: translate(0);
+    opacity: 1;
+    text-shadow: 0 0 2px white;
+  }
+  15% {
+    transform: translate(-5px, 5px) skew(-5deg);
+    opacity: 0.7;
+    text-shadow: 2px 2px 8px white;
+  }
+  30% {
+    transform: translate(5px, -5px) skew(5deg);
+    opacity: 0.8;
+    text-shadow: -2px -2px 8px white;
+  }
+  45% {
+    transform: translate(-5px, 3px) skew(-3deg);
+    opacity: 0.7;
+    text-shadow: 3px 3px 10px white;
+  }
+  60% {
+    transform: translate(5px, -3px) skew(3deg);
+    opacity: 0.8;
+    text-shadow: -3px -3px 10px white;
+  }
+  75% {
+    transform: translate(-2px, 2px);
+    opacity: 0.9;
+    text-shadow: 1px 1px 4px white;
+  }
+  100% {
+    transform: translate(0);
+    opacity: 1;
+    text-shadow: 0 0 2px white;
+  }
+}
+
+.glitch-container {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-text {
+  display: block;
+  position: relative;
+  color: white;
+  /* Optional: add a subtle base shadow using your primary color */
+  text-shadow: 1px 1px 2px #fa4c15;
+}
+
+.glitch-text-white {
+  color: #fa4c15;
+  position: relative;
+  /* Optional: add a subtle base shadow using your primary color */
+  text-shadow: 0px 0px 0px white;
+}
+
+/* Standard glitch overlay using #FA4C15 */
+.glitch-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  user-select: none;
+  animation: violentGlitch 0.5s linear;
+}
+
+/* Alternative glitch overlay using white,
+   useful when the base text is already #FA4C15 */
+.glitch-active-white {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  user-select: none;
+  animation: violentGlitchWhite 0.5s linear;
+}
+
+/* Solana Wallet Modal Styles */
+.wallet-adapter-modal-wrapper {
+  z-index: 9999 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.wallet-adapter-modal-overlay {
+  z-index: 9998 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.wallet-adapter-modal {
+  z-index: 9999 !important;
+  position: relative !important;
+  background: #1a1a1a !important;
+  border: 1px solid #374151 !important;
+  border-radius: 8px !important;
+  color: white !important;
+}
+
+.wallet-adapter-modal-title {
+  color: #fa4c15 !important;
+  font-weight: bold !important;
+}
+
+.wallet-adapter-modal-list {
+  padding: 0 !important;
+}
+
+.wallet-adapter-modal-list-item {
+  background: transparent !important;
+  border: 1px solid #374151 !important;
+  border-radius: 6px !important;
+  margin: 8px 0 !important;
+  padding: 12px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.wallet-adapter-modal-list-item:hover {
+  background: #374151 !important;
+  border-color: #fa4c15 !important;
+}
+
+.wallet-adapter-modal-list-item:focus {
+  outline: 2px solid #fa4c15 !important;
+  outline-offset: 2px !important;
+}
+
+.wallet-adapter-modal-button-close {
+  color: white !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+.wallet-adapter-modal-button-close:hover {
+  color: #fa4c15 !important;
+}
+
+/* Marquee Animation for Galxe Quest Banner */
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* Pause marquee on hover for better UX */
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
