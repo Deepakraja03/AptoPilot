@@ -138,7 +138,7 @@ export default function WalletConnectionDialog({
       <DialogContent className="sm:max-w-md bg-gray-900 border-gray-800">
         <DialogHeader>
           <DialogTitle className="text-white text-xl font-semibold flex items-center gap-2">
-            <BiWallet className="h-6 w-6 text-[#FA4C15]" />
+            <BiWallet className="h-6 w-6 text-[#ADFEB9]" />
             Connect Wallet
           </DialogTitle>
         </DialogHeader>
@@ -163,15 +163,15 @@ export default function WalletConnectionDialog({
                   key={wallet.id}
                   onClick={wallet.onClick}
                   disabled={isLoading || loadingWallet !== null}
-                  className="w-full h-16 bg-gray-800/50 border border-gray-700 hover:bg-gray-700 hover:border-[#FA4C15]/50 text-white rounded-lg transition-all duration-200 flex items-center justify-between p-4"
+                  className="w-full h-16 bg-gray-800/50 border border-gray-700 hover:bg-gray-700 hover:border-[#ADFEB9]/50 text-white rounded-lg transition-all duration-200 flex items-center justify-between p-4"
                   variant="outline"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 flex items-center justify-center">
                       {isLoading ? (
-                        <div className="w-6 h-6 border-2 border-gray-400 border-t-[#FA4C15] rounded-full animate-spin" />
+                        <div className="w-6 h-6 border-2 border-gray-400 border-t-[#ADFEB9] rounded-full animate-spin" />
                       ) : (
-                        <Icon className="w-6 h-6 text-[#FA4C15]" />
+                        <Icon className="w-6 h-6 text-[#ADFEB9]" />
                       )}
                     </div>
                     <div className="text-left">
@@ -190,11 +190,11 @@ export default function WalletConnectionDialog({
           <div className="pt-4 border-t border-gray-800">
             <p className="text-xs text-gray-500 text-center leading-relaxed">
               By connecting a wallet, you agree to our{" "}
-              <span className="text-[#FA4C15] hover:text-[#FA4C15]/80 cursor-pointer">
+              <span className="text-[#ADFEB9] hover:text-[#ADFEB9]/80 cursor-pointer">
                 Terms of Service
               </span>{" "}
               and{" "}
-              <span className="text-[#FA4C15] hover:text-[#FA4C15]/80 cursor-pointer">
+              <span className="text-[#ADFEB9] hover:text-[#ADFEB9]/80 cursor-pointer">
                 Privacy Policy
               </span>
             </p>

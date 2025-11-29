@@ -76,7 +76,7 @@ export const WalletSelectionModal: React.FC<WalletSelectionModalProps> = ({
 
           {/* Header */}
           <div className="p-6 pb-0">
-            <h2 className="text-xl font-bold text-center text-orange-500">
+            <h2 className="text-xl font-bold text-center text-[#ADFEB9]">
               Connect Wallet
             </h2>
           </div>

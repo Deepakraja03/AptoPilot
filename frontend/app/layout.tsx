@@ -124,7 +124,7 @@ export const metadata: Metadata = {
     "mobile-web-app-capable": "yes",
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "black-translucent",
-    "theme-color": "#FA4C15",
+    "theme-color": "#ADFEB9",
     "color-scheme": "dark light",
     "supported-color-schemes": "dark light",
   },
@@ -236,7 +236,7 @@ export default function RootLayout({
         {/* Skip to main content for accessibility */}
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-[#FA4C15] text-white px-4 py-2 z-50"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-[#ADFEB9] text-white px-4 py-2 z-50"
         >
           Skip to main content
         </a>

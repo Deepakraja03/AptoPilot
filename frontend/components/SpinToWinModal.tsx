@@ -15,7 +15,7 @@ interface SpinToWinModalProps {
 const data = [
   {
     option: "0.1 ISOL",
-    style: { backgroundColor: "#FA4C15", textColor: "white" },
+    style: { backgroundColor: "#ADFEB9", textColor: "white" },
   },
   {
     option: "0.5 ISOL",
@@ -23,7 +23,7 @@ const data = [
   },
   {
     option: "1.0 ISOL",
-    style: { backgroundColor: "#FA4C15", textColor: "white" },
+    style: { backgroundColor: "#ADFEB9", textColor: "white" },
   },
   {
     option: "2.5 ISOL",
@@ -31,7 +31,7 @@ const data = [
   },
   {
     option: "0.2 ISOL",
-    style: { backgroundColor: "#FA4C15", textColor: "white" },
+    style: { backgroundColor: "#ADFEB9", textColor: "white" },
   },
   {
     option: "0.8 ISOL",
@@ -291,7 +291,7 @@ export const SpinToWinModal: React.FC<SpinToWinModalProps> = ({
 
           {/* Header */}
           <div className="p-6 pb-0">
-            <h2 className="text-2xl font-bold text-center text-orange-500">
+            <h2 className="text-2xl font-bold text-center text-[#ADFEB9]">
               Spin & Win ISOL Tokens!
             </h2>
           </div>
@@ -326,13 +326,13 @@ export const SpinToWinModal: React.FC<SpinToWinModalProps> = ({
                         prizeNumber={prizeNumber}
                         data={data}
                         onStopSpinning={handleSpinComplete}
-                        backgroundColors={["#FA4C15", "#1a1a1a"]}
+                        backgroundColors={["#ADFEB9", "#1a1a1a"]}
                         textColors={["white"]}
-                        outerBorderColor="#FA4C15"
+                        outerBorderColor="#ADFEB9"
                         outerBorderWidth={4}
                         innerBorderColor="#333"
                         innerBorderWidth={2}
-                        radiusLineColor="#FA4C15"
+                        radiusLineColor="#ADFEB9"
                         radiusLineWidth={2}
                         fontSize={14}
                         textDistance={60}
@@ -349,7 +349,7 @@ export const SpinToWinModal: React.FC<SpinToWinModalProps> = ({
                       </Button>
                     ) : (
                       <div className="text-center space-y-4">
-                        <div className="text-xl font-bold text-orange-500">
+                        <div className="text-xl font-bold text-[#ADFEB9]">
                           🎉 You won {data[prizeNumber].option}! 🎉
                         </div>
                         <Button
@@ -375,7 +375,7 @@ export const SpinToWinModal: React.FC<SpinToWinModalProps> = ({
                   </p>
 
                   <div className="bg-gray-900 p-4 rounded-lg space-y-2">
-                    <h3 className="font-semibold text-orange-500">
+                    <h3 className="font-semibold text-[#ADFEB9]">
                       Intent Sol (ISOL)
                     </h3>
                     <p className="text-sm text-gray-400">
@@ -389,7 +389,7 @@ export const SpinToWinModal: React.FC<SpinToWinModalProps> = ({
                         href="https://explorer.solana.com/address/6Ape7PCZZvEQkPxvMDJhAnZ8Ro9FFGbNuRa3o6VUyk6y?cluster=devnet"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-orange-500 hover:text-orange-400 break-all"
+                        className="text-[#ADFEB9] hover:text-[#ADFEB9] break-all"
                       >
                         6Ape7PCZZvEQkPxvMDJhAnZ8Ro9FFGbNuRa3o6VUyk6y
                       </a>
@@ -432,7 +432,7 @@ export const SpinToWinModal: React.FC<SpinToWinModalProps> = ({
                           ✅ You&apos;re now whitelisted for the airdrop!
                         </div>
                       ) : (
-                        <div className="text-sm text-orange-400">
+                        <div className="text-sm text-[#ADFEB9]">
                           ⏳ Processing whitelist...
                         </div>
                       )}

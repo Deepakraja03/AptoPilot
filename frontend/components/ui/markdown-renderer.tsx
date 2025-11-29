@@ -59,7 +59,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
             const isInline = !className;
             if (isInline) {
               return (
-                <code className="bg-gray-700 text-orange-300 px-1 py-0.5 rounded text-xs font-mono">
+                <code className="bg-gray-700 text-[#ADFEB9] px-1 py-0.5 rounded text-xs font-mono">
                   {children}
                 </code>
               );

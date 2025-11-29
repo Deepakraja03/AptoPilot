@@ -82,7 +82,7 @@ export const seoConfig = {
   defaultMeta: {
     viewport: "width=device-width, initial-scale=1, maximum-scale=5",
     charset: "utf-8",
-    "theme-color": "#FA4C15",
+    "theme-color": "#ADFEB9",
     "color-scheme": "dark light",
     "mobile-web-app-capable": "yes",
     "apple-mobile-web-app-capable": "yes",

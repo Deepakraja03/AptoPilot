@@ -100,7 +100,7 @@ export function DashboardLoading() {
                 transition={{ duration: 0.5 }}
                 className="mb-6"
               >
-                <div className="relative inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-[#FA4C15] to-[#FF6B35] rounded-full mb-4">
+                <div className="relative inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-[#ADFEB9] to-[#FF6B35] rounded-full mb-4">
                   {/* Rotating outer ring */}
                   <motion.div
                     animate={{ rotate: 360 }}
@@ -209,7 +209,7 @@ export function DashboardLoading() {
             {/* Dashboard Skeleton */}
             <div className="rounded-2xl border border-gray-800 bg-gray-900/30 p-8 relative">
               {/* Subtle glow effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#FA4C15]/5 to-[#FF6B35]/5 blur-xl" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#ADFEB9]/5 to-[#FF6B35]/5 blur-xl" />
               <div className="relative z-10">
                 {/* Tabs Skeleton */}
                 <div className="flex justify-center mb-8">
@@ -375,7 +375,7 @@ export function DashboardLoading() {
                       repeatDelay: 3,
                       ease: "easeInOut",
                     }}
-                    className="w-10 h-10 bg-gradient-to-r from-[#FA4C15] to-[#FF6B35] rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow"
+                    className="w-10 h-10 bg-gradient-to-r from-[#ADFEB9] to-[#FF6B35] rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow"
                   >
                     <Icon className="w-5 h-5 text-white" />
                   </motion.div>

@@ -37,7 +37,7 @@ export function TokenImage({
         className={cn(
           'rounded-full flex items-center justify-center transition-all duration-300',
           sizeClasses,
-          showRing && `ring-2 ${ringColor} group-hover:ring-[#FA4C15]/30`,
+          showRing && `ring-2 ${ringColor} group-hover:ring-[#ADFEB9]/30`,
           'group-hover:scale-110 transform',
           className
         )}
@@ -60,7 +60,7 @@ export function TokenImage({
         className={cn(
           'rounded-full transition-all duration-300',
           sizeClasses,
-          showRing && `ring-2 ${ringColor} group-hover:ring-[#FA4C15]/30`,
+          showRing && `ring-2 ${ringColor} group-hover:ring-[#ADFEB9]/30`,
           'group-hover:scale-110 transform',
           !imageLoaded && 'opacity-0',
           className

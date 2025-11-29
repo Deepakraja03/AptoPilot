@@ -21,7 +21,7 @@ export function SectionLoading({
         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
         className="mb-4"
       >
-        <Loader2 className="w-8 h-8 text-[#FA4C15]" />
+        <Loader2 className="w-8 h-8 text-[#ADFEB9]" />
       </motion.div>
       
       <motion.div

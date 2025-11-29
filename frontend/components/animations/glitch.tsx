@@ -24,12 +24,12 @@ const GlitchText: React.FC<GlitchTextProps> = ({ text, className, children }) =>
   }, []);
 
   // Determine the base text class based on the parent's text color.
-  // If the parent's className includes "text-orange-500", use "glitch-text-white" for the base text.
-  const baseTextClass = className?.includes("text-orange-500") ? "glitch-text-white" : "glitch-text";
+  // If the parent's className includes "text-[#ADFEB9]", use "glitch-text-white" for the base text.
+  const baseTextClass = className?.includes("text-[#ADFEB9]") ? "glitch-text-white" : "glitch-text";
 
   // Determine the proper glitch overlay style.
-  // If the parent's text color is "text-orange-500", use the white glitch overlay.
-  const glitchClass = className?.includes("text-orange-500") ? "glitch-active-white" : "glitch-active";
+  // If the parent's text color is "text-[#ADFEB9]", use the white glitch overlay.
+  const glitchClass = className?.includes("text-[#ADFEB9]") ? "glitch-active-white" : "glitch-active";
 
   return (
     <div className={`glitch-container ${className || ''}`}>

@@ -176,7 +176,7 @@
       /* Start of fade-out */ transparent 100% /* Bottom transparent area */
     ),
     /* Horizontal gradient */
-      linear-gradient(to right, #5a2411, #fa4c15 30%, #fa4c15 60%, #5a2411);
+      linear-gradient(to right, #5a2411, #adfeb9 30%, #adfeb9 60%, #5a2411);
   background-size: 100% 100%;
   min-height: 100vh;
 }
@@ -229,37 +229,37 @@ body {
   0% {
     transform: translate(0);
     opacity: 1;
-    text-shadow: 0 0 2px #fa4c15;
+    text-shadow: 0 0 2px #adfeb9;
   }
   15% {
     transform: translate(-5px, 5px) skew(-5deg);
     opacity: 0.7;
-    text-shadow: 2px 2px 8px #fa4c15;
+    text-shadow: 2px 2px 8px #adfeb9;
   }
   30% {
     transform: translate(5px, -5px) skew(5deg);
     opacity: 0.8;
-    text-shadow: -2px -2px 8px #fa4c15;
+    text-shadow: -2px -2px 8px #adfeb9;
   }
   45% {
     transform: translate(-5px, 3px) skew(-3deg);
     opacity: 0.7;
-    text-shadow: 3px 3px 10px #fa4c15;
+    text-shadow: 3px 3px 10px #adfeb9;
   }
   60% {
     transform: translate(5px, -3px) skew(3deg);
     opacity: 0.8;
-    text-shadow: -3px -3px 10px #fa4c15;
+    text-shadow: -3px -3px 10px #adfeb9;
   }
   75% {
     transform: translate(-2px, 2px);
     opacity: 0.9;
-    text-shadow: 1px 1px 4px #fa4c15;
+    text-shadow: 1px 1px 4px #adfeb9;
   }
   100% {
     transform: translate(0);
     opacity: 1;
-    text-shadow: 0 0 2px #fa4c15;
+    text-shadow: 0 0 2px #adfeb9;
   }
 }
 
@@ -311,17 +311,14 @@ body {
   position: relative;
   color: white;
   /* Optional: add a subtle base shadow using your primary color */
-  text-shadow: 1px 1px 2px #fa4c15;
+  text-shadow: 1px 1px 2px #adfeb9;
 }
 
 .glitch-text-white {
-  color: #fa4c15;
-  position: relative;
-  /* Optional: add a subtle base shadow using your primary color */
+  color: #adfeb9;
   text-shadow: 0px 0px 0px white;
 }
 
-/* Standard glitch overlay using #FA4C15 */
 .glitch-active {
   position: absolute;
   top: 0;
@@ -331,14 +328,13 @@ body {
   animation: violentGlitch 0.5s linear;
 }
 
-/* Alternative glitch overlay using white,
-   useful when the base text is already #FA4C15 */
+  /* Alternative glitch overlay using white,
+   useful when the base text is already #ADFEB9 */
 .glitch-active-white {
   position: absolute;
   top: 0;
   left: 0;
   pointer-events: none;
-  user-select: none;
   animation: violentGlitchWhite 0.5s linear;
 }
 
@@ -372,7 +368,7 @@ body {
 }
 
 .wallet-adapter-modal-title {
-  color: #fa4c15 !important;
+  color: #adfeb9 !important;
   font-weight: bold !important;
 }
 
@@ -392,11 +388,11 @@ body {
 
 .wallet-adapter-modal-list-item:hover {
   background: #374151 !important;
-  border-color: #fa4c15 !important;
+  border-color: #adfeb9 !important;
 }
 
 .wallet-adapter-modal-list-item:focus {
-  outline: 2px solid #fa4c15 !important;
+  outline: 2px solid #adfeb9 !important;
   outline-offset: 2px !important;
 }
 
@@ -408,7 +404,7 @@ body {
 }
 
 .wallet-adapter-modal-button-close:hover {
-  color: #fa4c15 !important;
+  color: #adfeb9 !important;
 }
 
 /* Marquee Animation for Galxe Quest Banner */

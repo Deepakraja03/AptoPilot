@@ -435,7 +435,7 @@ export function SiteHeader() {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="outline"
-                      className="bg-[#FA4C15] hover:bg-opacity-90 text-white border-none"
+                      className="bg-[#ADFEB9] hover:bg-opacity-90 text-black border-none"
                     >
                       <Wallet className="w-4 h-4 mr-2" />
                       Wallets
@@ -567,7 +567,7 @@ export function SiteHeader() {
                                     walletBalances.eth.address
                                   )
                                 }
-                                className="flex-1 text-xs bg-orange-900/30 text-orange-400 border-orange-700 hover:bg-orange-900/50"
+                                className="flex-1 text-xs bg-[#ADFEB9]/30 text-[#ADFEB9] border-[#ADFEB9] hover:bg-[#ADFEB9]/50"
                               >
                                 <ArrowUpFromLine className="w-3 h-3 mr-1" />
                                 Withdraw
@@ -690,7 +690,7 @@ export function SiteHeader() {
                                     walletBalances.sol.address
                                   )
                                 }
-                                className="flex-1 text-xs bg-orange-900/30 text-orange-400 border-orange-700 hover:bg-orange-900/50"
+                                className="flex-1 text-xs bg-[#ADFEB9]/30 text-[#ADFEB9] border-[#ADFEB9] hover:bg-[#ADFEB9]/50"
                               >
                                 <ArrowUpFromLine className="w-3 h-3 mr-1" />
                                 Withdraw
@@ -796,13 +796,13 @@ export function SiteHeader() {
                 <div className="flex items-center gap-3 text-sm font-medium">
                   <Link
                     href="/faucet"
-                    className="text-white hover:bg-[#FA4C15] px-3 py-2 rounded-md transition-colors"
+                    className="text-white hover:bg-[#ADFEB9] px-3 py-2 rounded-md transition-colors"
                   >
                     Faucet
                   </Link>
                   <Link
                     href="/test-swap"
-                    className="text-white hover:bg-[#FA4C15] px-3 py-2 rounded-md transition-colors"
+                    className="text-white hover:bg-[#ADFEB9] px-3 py-2 rounded-md transition-colors"
                   >
                     Swap
                   </Link>
@@ -907,7 +907,7 @@ export function SiteHeader() {
         <DialogContent className="bg-black border-gray-800 text-white">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <ArrowUpFromLine className="w-5 h-5 text-orange-400" />
+              <ArrowUpFromLine className="w-5 h-5 text-[#ADFEB9]" />
               Withdraw {currentWallet?.type}
             </DialogTitle>
             <DialogDescription className="text-gray-400">
