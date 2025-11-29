@@ -2,7 +2,7 @@
 
 import { NextRequest as NextRequestBase, NextResponse } from "next/server";
 import turnkeyService from "../lib/services/turnkey/index";
-import databaseService from "../lib/services/firebase/database";
+import databaseService from "../lib/services/mongo/database";
 
 interface User {
   id?: string;
@@ -1524,8 +1524,13 @@ export const registerUser = asyncHandler(async (req?: NextRequest) => {
     );
   }
 
-  const apiKeyName = process.env.NEXT_PUBLIC_TURNKEY_API_KEY_NAME || "";
-  const publicKey = process.env.NEXT_PUBLIC_TURNKEY_API_PUBLIC_KEY || "";
+  // Prefer values from request body if provided, otherwise from env; finally, fallback to a sensible default
+  const bodyMaybe = typeof req?.body === "object" && req?.body !== null ? (req?.body as any) : null;
+  const publicKey = (bodyMaybe?.publicKey as string) || process.env.NEXT_PUBLIC_TURNKEY_API_PUBLIC_KEY || "";
+  let apiKeyName = (bodyMaybe?.apiKeyName as string) || process.env.NEXT_PUBLIC_TURNKEY_API_KEY_NAME || "";
+  if (!apiKeyName) {
+    apiKeyName = `${username}-root-key-${Date.now()}`;
+  }
   console.log("Public Key:", publicKey);
   console.log("API Key Name:", apiKeyName);
   console.log("Username:", username);

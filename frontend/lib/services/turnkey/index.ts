@@ -13,7 +13,7 @@ import { TurnkeySigner as EthersSigner } from "@turnkey/ethers";
 import { ethers } from "ethers";
 import { TransactionBlock } from "@mysten/sui.js";
 import { SuiClient } from "@mysten/sui/client";
-import databaseService from "../firebase/database";
+import databaseService from "../mongo/database";
 
 if (typeof window === "undefined") {
   (async () => {

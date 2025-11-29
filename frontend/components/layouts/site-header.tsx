@@ -188,6 +188,32 @@ export function SiteHeader() {
     }
   };
 
+  const handleCreateAptosWallet = async () => {
+    if (isCreatingWallet || (walletBalances as any).aptos?.exists) return;
+
+    try {
+      setIsCreatingWallet(true);
+      const walletName = `APTOS-Wallet-${Date.now()}`;
+      const accounts = [
+        {
+          curve: "CURVE_ED25519",
+          pathFormat: "PATH_FORMAT_BIP32",
+          path: "m/44'/637'/0'/0'/0'",
+          addressFormat: "ADDRESS_FORMAT_APTOS",
+        },
+      ];
+
+      await createWallet(walletName, accounts);
+      toast.success("Aptos wallet created successfully");
+      await handleRefreshWalletData();
+    } catch (error) {
+      console.error("Failed to create Aptos wallet:", error);
+      toast.error("Failed to create Aptos wallet");
+    } finally {
+      setIsCreatingWallet(false);
+    }
+  };
+
   const handleCopyAddress = (address: string, type: string) => {
     navigator.clipboard.writeText(address);
     toast.success(`${type} address copied to clipboard`);
@@ -714,6 +740,21 @@ export function SiteHeader() {
                           </Button>
                         </div>
 
+                        {/* Create APTOS Wallet Option */}
+                        <div className="p-3 pt-0">
+                          <Button
+                            onClick={handleCreateAptosWallet}
+                            disabled={isCreatingWallet}
+                            className="w-full text-white bg-gray-800 hover:bg-gray-700 border border-gray-600"
+                            variant="outline"
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            {isCreatingWallet
+                              ? "Creating..."
+                              : "Create APTOS Wallet"}
+                          </Button>
+                        </div>
+
                         {/* Wallet Creation Options for missing wallets */}
                         <div className="p-2 border-t border-gray-800 space-y-1">
                           {!walletBalances.eth.exists && (
@@ -805,6 +846,18 @@ export function SiteHeader() {
                     className="text-white hover:bg-[#ADFEB9] px-3 py-2 rounded-md transition-colors"
                   >
                     Swap
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="text-black bg-[#ADFEB9] hover:bg-[#9FE4AD] px-3 py-2 rounded-md transition-colors"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="text-white border border-[#ADFEB9] hover:bg-[#0f1a11] px-3 py-2 rounded-md transition-colors"
+                  >
+                    Sign up
                   </Link>
                 </div>
               </>
