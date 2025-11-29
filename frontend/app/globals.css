@@ -176,7 +176,7 @@
       /* Start of fade-out */ transparent 100% /* Bottom transparent area */
     ),
     /* Horizontal gradient */
-      linear-gradient(to right, #5a2411, #adfeb9 30%, #adfeb9 60%, #5a2411);
+      linear-gradient(to right, #adfeb9, #adfeb9 30%, #adfeb9 60%, #adfeb9);
   background-size: 100% 100%;
   min-height: 100vh;
 }

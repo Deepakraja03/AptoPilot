@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import TypewriterEffect from "@/components/animations/TypewriterEffect";
 import Image from "next/image";
 import codeSpace from "@/app/assets/codeImage.svg";
 import Capability1 from "@/app/assets/capabilities1.svg";
@@ -16,30 +15,22 @@ export default function Home() {
             <div className="flex flex-col md:flex-row items-center">
               {/* Left column - Text content */}
               <div className="w-full md:w-7/12 lg:w-7/12">
-                <h1 className="text-7xl md:text-8xl font-light tracking-tight">
+                <h1 className="text-6xl md:text-7xl font-light tracking-tight">
                   <span className="hover:cursor-pointer">
-                    Turn simple words
+                    Turn one command into a self-flying DeFi strategy{" "}
+                    <span className="text-[#ADFEB9]">on Aptos.</span>
                   </span>
                   <br />
-                  <span className="hover:cursor-pointer">into</span>
-                  <span
-                    style={{ fontFamily: "InstrumentSerif" }}
-                    className="text-[#ADFEB9] italic"
-                  >
-                    <TypewriterEffect className="leading-[1.2]" />
-                  </span>
                 </h1>
 
                 <p className="text-xl text-gray-400 mt-8 mb-5 max-w-2xl">
-                  AptoPilot is the first AI-powered intent engine for DeFi that
-                  turns natural language into automated, gasless, cross-chain
-                  strategies.
+                  Describe your goal in plain English — AptoPilot’s Aptos-native engine turns it into a gasless, code-free, always-optimizing DeFi strategy.
                 </p>
 
                 <div className="flex space-x-6">
                   <button
                     disabled
-                    className="bg-[#ADFEB9] cursor-not-allowed text-white px-10 py-4 rounded text-lg opacity-90"
+                    className="bg-[#ADFEB9] cursor-not-allowed text-black px-10 py-4 rounded text-lg opacity-90"
                   >
                     Coming Soon...
                   </button>
