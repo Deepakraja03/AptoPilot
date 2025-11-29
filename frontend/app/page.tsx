@@ -78,19 +78,18 @@ export default function Home() {
                 style={{ fontFamily: "InstrumentSerif" }}
               >
                 <GlitchText
-                  text="Your intent"
+                  text="Your Mission"
                   className="text-[#ADFEB9] hover:cursor-pointer"
                 />
               </h2>
               <div>
                 <p className="text-white text-lg">
-                  No wallet hopping. No spreadsheets. No guesswork. Just one
-                  sentence.
+                No wallet hopping. No spreadsheets. No guesswork, just one line in plain English.
                 </p>
               </div>
-              <div className="mb-6">
+              <div className="mb-6 mt-4">
                 <p className="text-gray-400 text-lg mb-0">
-                  &quot;Move $1,000 into low-risk DeFi that adapts weekly.&quot;
+                  &quot;Park 40% of my USDC in safe yield, borrow ETH if rates are cheap, exit if things get spooky.&quot;
                 </p>
               </div>
             </div>
@@ -121,19 +120,18 @@ export default function Home() {
                 style={{ fontFamily: "InstrumentSerif" }}
               >
                 <GlitchText
-                  text="Our AI engine"
+                  text="Our Aptos AI engine"
                   className="text-[#ADFEB9] hover:cursor-pointer"
                 />
               </h2>
               <div>
                 <p className="text-white text-lg">
-                  No approvals. No gas anxiety. No breaking flows. It just
-                  works.
+                  Parses your command, builds a strategy graph, and routes it across Aptos.
                 </p>
               </div>
-              <div className="mb-6">
+              <div className="mb-6 mt-4">
                 <p className="text-gray-400 text-lg mb-0">
-                  Executed via Circle CCTP, 1inch, and Zircuit — gas-free.
+                  &quot;Executed via Aptos Move strategies with cross-chain rails.&quot;
                 </p>
               </div>
             </div>
@@ -164,20 +162,18 @@ export default function Home() {
                 style={{ fontFamily: "InstrumentSerif" }}
               >
                 <GlitchText
-                  text="It runs, adapts &amp; grows"
+                  text="It flies, adapts &amp; protects"
                   className="text-[#ADFEB9] hover:cursor-pointer"
                 />
               </h2>
               <div>
                 <p className="text-white text-lg">
-                  You set the intent. We handle the rest — live, compliant, and
-                  optimized.
+                  You set the mission; AptoPilot keeps it live, compliant, and optimized on Aptos.
                 </p>
               </div>
-              <div className="mb-6">
+              <div className="mb-6 mt-4">
                 <p className="text-gray-400 text-lg mb-0">
-                  &quot;One goal becomes a full plan that grows and
-                  adapts.&quot;
+                  &quot;One sentence becomes a self-flying strategy that rebalances, exits on risk..&quot;
                 </p>
               </div>
             </div>
@@ -188,25 +184,27 @@ export default function Home() {
         <div className="bg-[#0e0e0e] text-white py-8 md:pt-20 px-4">
           <div className="container mx-auto">
             {/* Heading Section */}
-            <div className="flex justify-center gap-4 items-center">
-              <Image
-                src="/landing/left.svg"
-                alt="right"
-                width={200}
-                height={200}
-              />
-              <h2
-                className=" md:text-lg font-bold px-4 py-2 rounded-full text-white bg-[#ADFEB9]/60 mb-2"
-                style={{ fontFamily: "Satoshi" }}
-              >
-                where DeFi gets superpowers
-              </h2>
-              <Image
-                src="/landing/right.svg"
-                alt="right"
-                width={200}
-                height={200}
-              />
+            <div className="flex flex-col justify-center gap-4 items-center">
+              <div className="flex justify-center items-center">
+                <Image
+                  src="/landing/left.svg"
+                  alt="right"
+                  width={200}
+                  height={200}
+                />
+                <h2
+                  className=" md:text-lg font-bold px-4 py-2 rounded-full text-white bg-[#ADFEB9]/60 mb-2"
+                  style={{ fontFamily: "Satoshi" }}
+                >
+                  where DeFi gets superpowers
+                </h2>
+                <Image
+                  src="/landing/right.svg"
+                  alt="right"
+                  width={200}
+                  height={200}
+                />
+              </div>
               
               <div className="flex justify-center items-center">
                 <h2
@@ -217,7 +215,7 @@ export default function Home() {
                 </h2>
               </div>
 
-              <p className="text-gray-400 mt-8 max-w-xl mx-auto text-lg text-center">
+              <p className="text-gray-400 mt-4 max-w-xl mx-auto text-lg text-center">
                 AptoPilot goes beyond basic automation — enabling yielding,
                 lending, borrowing, and real strategy execution through simple
                 commands.
