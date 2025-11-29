@@ -4,10 +4,11 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-aptopilot = "_"
+aptopilot = "0x649c0a6a035ba145736761a8d0cbce4c6f3bb188b013518d77aac3c18ae3b35d"
 stake_pool_addr = "_"
 fa_obj_addr = "_"
 initial_reward_creator_addr = "_"
+aries = "0x9770fa9c725cbd97eb50b2be5f7416efdfd1f1554beb0750d4dae4c64e860da3"
 
 [dependencies]
 AptosFramework = { git = "https://github.com/aptos-labs/aptos-framework.git", rev = "testnet", subdir = "aptos-framework" }

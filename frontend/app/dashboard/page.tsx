@@ -62,9 +62,18 @@ export default function DashboardPage() {
     refreshAllData();
   };
 
-  // Detect Aptos wallet and offer creation when missing (avoid any)
-  type WalletDataLike = { aptos?: { exists?: boolean } } | undefined;
-  const aptosExists = Boolean((walletData as WalletDataLike)?.aptos?.exists);
+  // Detect Aptos wallet and offer creation when missing
+  type WalletDataLike = { aptos?: { exists?: boolean; address?: string } } | undefined;
+  type WalletItem = { addressFormat?: string; path?: string; chain?: string };
+  const aptosFromDashboard = Boolean((walletData as WalletDataLike)?.aptos?.exists);
+  const aptosFromUser = Array.isArray(user?.wallets)
+    ? user!.wallets!.some((w: WalletItem) =>
+        (w.addressFormat === "ADDRESS_FORMAT_APTOS") ||
+        (typeof w.path === "string" && w.path.includes("/637/")) ||
+        (typeof w.chain === "string" && w.chain.toLowerCase() === "aptos")
+      )
+    : false;
+  const aptosExists = aptosFromDashboard || aptosFromUser;
   const [isCreating, setIsCreating] = useState(false);
   const handleCreateAptosWallet = async () => {
     if (isCreating || aptosExists) return;
@@ -80,8 +89,8 @@ export default function DashboardPage() {
         },
       ];
       await createWallet(walletName, accounts);
-      await fetchUserWallets();
-      await refreshAllData();
+      const latestWallets = await fetchUserWallets();
+      await refreshAllData(latestWallets); // bypass cooldown with fresh wallets
     } finally {
       setIsCreating(false);
     }

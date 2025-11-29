@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import databaseService from "@/lib/services/firebase/database";
+import databaseService from "@/lib/services/mongo/database";
 import { User, WalletAccount } from "@/lib/services/firebase/schema";
 
 export type AuthenticatedUser = User;
@@ -109,6 +109,7 @@ export async function getUserWalletAddresses(userId: string) {
       ethereum: null as string | null,
       solana: null as string | null,
       sui: null as string | null,
+      aptos: null as string | null,
     };
 
     // Find chain-specific addresses
@@ -123,6 +124,9 @@ export async function getUserWalletAddresses(userId: string) {
         case "ADDRESS_FORMAT_SUI":
           addressMap.sui = account.address;
           break;
+        case "ADDRESS_FORMAT_APTOS":
+          addressMap.aptos = account.address;
+          break;
       }
     });
 
@@ -135,8 +139,9 @@ export async function getUserWalletAddresses(userId: string) {
       accounts: accounts,
       chainAddresses: {
         ethereum: addressMap.ethereum || primaryAddress,
-        solana: addressMap.solana || null, // Use actual Solana address from user's wallet
+        solana: addressMap.solana || null,
         sui: addressMap.sui || primaryAddress,
+        aptos: addressMap.aptos || null,
       },
       // Additional metadata for better error handling
       metadata: {

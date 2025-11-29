@@ -142,6 +142,7 @@ export interface UnifiedDashboardState {
     eth: WalletBalance;
     sol: WalletBalance;
     sui: WalletBalance;
+    aptos: WalletBalance;
     lastUpdated: string;
     multiChainData: unknown; // Keep for backward compatibility
   };
@@ -164,6 +165,7 @@ const initialState: UnifiedDashboardState = {
     eth: { balance: 0, address: "", exists: false, usdValue: 0 },
     sol: { balance: 0, address: "", exists: false, usdValue: 0 },
     sui: { balance: 0, address: "", exists: false, usdValue: 0 },
+    aptos: { balance: 0, address: "", exists: false, usdValue: 0 },
     lastUpdated: "",
     multiChainData: null,
   },
@@ -204,6 +206,7 @@ export const fetchUnifiedDashboardData = createAsyncThunk(
     let ethWallet = { balance: 0, address: "", exists: false, usdValue: 0 };
     let solWallet = { balance: 0, address: "", exists: false, usdValue: 0 };
     let suiWallet = { balance: 0, address: "", exists: false, usdValue: 0 };
+    let aptosWallet = { balance: 0, address: "", exists: false, usdValue: 0 };
 
     if (wallets && getWalletAccounts && Array.isArray(wallets) && wallets.length > 0) {
       console.log("Processing wallets for unified dashboard:", wallets);
@@ -246,6 +249,14 @@ export const fetchUnifiedDashboardData = createAsyncThunk(
                   usdValue: 0,
                 };
                 console.log(`SUI wallet set:`, suiWallet);
+              } else if (acc.addressFormat === "ADDRESS_FORMAT_APTOS") {
+                aptosWallet = {
+                  balance: 0,
+                  address: acc.address,
+                  exists: true,
+                  usdValue: 0,
+                };
+                console.log(`APTOS wallet set:`, aptosWallet);
               }
             });
           } else {
@@ -301,6 +312,16 @@ export const fetchUnifiedDashboardData = createAsyncThunk(
           solWallet.usdValue = solToken.value;
         }
       }
+
+      // Update Aptos wallet
+      const aptosChain = unifiedData.tokensChains.chains.find((c: ChainData) => c.name === "Aptos");
+      if (aptosChain && aptosWallet.exists) {
+        const aptToken = aptosChain.tokens.find((token: TokenData) => token.symbol === "APT");
+        if (aptToken) {
+          aptosWallet.balance = aptToken.balance;
+        }
+        aptosWallet.usdValue = aptosChain.totalValue;
+      }
     }
 
     return {
@@ -311,6 +332,7 @@ export const fetchUnifiedDashboardData = createAsyncThunk(
         eth: ethWallet,
         sol: solWallet,
         sui: suiWallet,
+        aptos: aptosWallet,
         lastUpdated: unifiedData.portfolio?.lastUpdated || new Date().toISOString(),
         multiChainData: unifiedData.tokensChains, // For backward compatibility
       },

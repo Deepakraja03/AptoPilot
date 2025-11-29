@@ -93,21 +93,48 @@ export function SiteHeader() {
     isLoading: isLoadingWallets,
   } = useUnifiedDashboard();
   const walletBalances = walletData;
-  const multiChainData = walletData.multiChainData;
   const isRefreshing = isLoadingWallets;
+
+  // Detect Aptos existence from either Redux walletData or user.wallets fallback
+  type WalletItem = { addressFormat?: string; path?: string; chain?: string; address?: string };
+  const hasAptosFromRedux = Boolean((walletBalances as any)?.aptos?.exists);
+  const hasAptosFromUser = Array.isArray(user?.wallets)
+    ? (user!.wallets as WalletItem[]).some(
+        (w) =>
+          w.addressFormat === "ADDRESS_FORMAT_APTOS" ||
+          (typeof w.path === "string" && w.path.includes("/637/")) ||
+          (typeof w.chain === "string" && w.chain.toLowerCase() === "aptos")
+      )
+    : false;
+  const hasAptos = hasAptosFromRedux || hasAptosFromUser;
 
   // Wallet data is now managed by Redux - no need for local loading logic
 
   const handleRefreshWalletData = async () => {
     try {
-      await fetchUserWallets();
-      await refreshAllData();
+      const latest = await fetchUserWallets();
+      await refreshAllData(latest); // pass fresh wallets to bypass cooldown and ensure Redux updates immediately
       toast.success("Wallet data refreshed");
     } catch (error) {
       console.error("Failed to refresh wallet data:", error);
       toast.error("Failed to refresh wallet data");
     }
   };
+
+  // Aptos withdraw (placeholder until Aptos SDK/custody signing is wired)
+  const executeAptosWithdraw = async () => {
+    if (!currentWallet || !withdrawAmount || !withdrawAddress) return;
+    try {
+      setIsProcessing(true);
+      toast.info("Aptos withdrawal is not yet enabled in this build.");
+    } catch (error: any) {
+      console.error("Aptos withdrawal failed:", error);
+      toast.error(error.message || "Aptos withdrawal failed");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCreateEthereumWallet = async () => {
     if (isCreatingWallet || walletBalances.eth.exists) return;
 
@@ -136,6 +163,7 @@ export function SiteHeader() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCreateSolanaWallet = async () => {
     if (isCreatingWallet || walletBalances.sol.exists) return;
 
@@ -162,6 +190,7 @@ export function SiteHeader() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCreateSuiWallet = async () => {
     if (isCreatingWallet || walletBalances.sui?.exists) return;
 
@@ -296,16 +325,15 @@ export function SiteHeader() {
 
   const executeSolanaWithdraw = async () => {
     if (!currentWallet || !withdrawAmount || !withdrawAddress) return;
-
     try {
       setIsProcessing(true);
 
       // Check if Phantom wallet is available
-      if (!window.solana || !window.solana.isPhantom) {
+      if (!((window as any).solana && (window as any).solana.isPhantom)) {
         throw new Error("Phantom wallet is not installed");
       }
 
-      await window.solana.connect();
+      await ((window as any).solana as { connect: () => Promise<void> }).connect();
       const connection = new Connection(
         `https://mainnet.helius-rpc.com/?api-key=${process.env.NEXT_PUBLIC_HELIUS_API_KEY}`
       );
@@ -327,7 +355,7 @@ export function SiteHeader() {
       transaction.feePayer = fromPubkey;
 
       const signedTransaction =
-        await window.solana.signTransaction(transaction);
+        await (window as any).solana.signTransaction(transaction);
       const signature = await connection.sendRawTransaction(
         signedTransaction.serialize()
       );
@@ -353,6 +381,8 @@ export function SiteHeader() {
       await executeEthereumWithdraw();
     } else if (currentWallet.type === "SOL") {
       await executeSolanaWithdraw();
+    } else if (currentWallet.type === "APTOS") {
+      await executeAptosWithdraw();
     }
   };
 
@@ -411,7 +441,7 @@ export function SiteHeader() {
     if (!user?.organizationId) {
       setWalletLoadInitiated(false);
     }
-  }, [user?.organizationId]);
+  }, [user?.organizationId, fetchUserWallets, refreshAllData, user?.wallets, walletLoadInitiated]);
 
   return (
     <>
@@ -464,7 +494,7 @@ export function SiteHeader() {
                       className="bg-[#ADFEB9] hover:bg-opacity-90 text-black border-none"
                     >
                       <Wallet className="w-4 h-4 mr-2" />
-                      Wallets
+                      Aptos Wallet
                       <ChevronDown className="w-4 h-4 ml-2" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -478,323 +508,115 @@ export function SiteHeader() {
                       </div>
                     ) : (
                       <>
-                        {/* EVM Chains Wallet Section */}
-                        {walletBalances.eth.exists && (
+                        {/* Aptos Wallet Section Only */}
+                        {hasAptos ? (
                           <div className="p-3 border-b border-gray-800">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
-                                  <span className="text-white text-xs font-bold">
-                                    E
-                                  </span>
+                                <div className="w-6 h-6 rounded-full bg-green-500/80 flex items-center justify-center">
+                                  <span className="text-white text-xs font-bold">A</span>
                                 </div>
-                                <div className="flex flex-col">
-                                  <span className="text-white font-medium">
-                                    EVM Chains
-                                  </span>
-                                  {/* <span className="text-gray-400 text-xs">
-                                    ETH • BASE • BSC • POLYGON • ARB • OP
-                                  </span> */}
-                                </div>
+                                <span className="text-white font-medium">Aptos</span>
                               </div>
                               <div className="text-right">
                                 <div className="text-white font-medium">
-                                  ${walletBalances.eth.usdValue.toFixed(2)}
+                                  {((((walletBalances as any).aptos?.balance) || 0) as number).toFixed(6)} APT
                                 </div>
-                                <div className="text-gray-400 text-xs">
-                                  Multi-chain balance
-                                </div>
+                                <div className="text-gray-400 text-xs">Balance</div>
                               </div>
                             </div>
                             <div className="flex items-center justify-between mb-3">
                               <span className="text-gray-400 text-sm font-mono">
-                                {walletBalances.eth.address.slice(0, 6)}...
-                                {walletBalances.eth.address.slice(-4)}
+                                {(() => {
+                                  const addrRedux = (walletBalances as any).aptos?.address as string | undefined;
+                                  let addr = addrRedux;
+                                  if (!addr && Array.isArray(user?.wallets)) {
+                                    const w = (user!.wallets as { addressFormat?: string; address?: string }[]).find(
+                                      (x) => x.addressFormat === "ADDRESS_FORMAT_APTOS"
+                                    );
+                                    addr = w?.address;
+                                  }
+                                  const safe = addr || "";
+                                  return `${safe.slice(0, 6)}...${safe.slice(-4)}`;
+                                })()}
                               </span>
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={() =>
-                                  handleCopyAddress(
-                                    walletBalances.eth.address,
-                                    "ETH"
-                                  )
-                                }
+                                onClick={() => {
+                                  const addrRedux = (walletBalances as any).aptos?.address as string | undefined;
+                                  let addr = addrRedux;
+                                  if (!addr && Array.isArray(user?.wallets)) {
+                                    const w = (user!.wallets as { addressFormat?: string; address?: string }[]).find(
+                                      (x) => x.addressFormat === "ADDRESS_FORMAT_APTOS"
+                                    );
+                                    addr = w?.address;
+                                  }
+                                  if (addr) handleCopyAddress(addr, "APTOS");
+                                }}
                                 className="text-gray-400 hover:text-white p-1"
                               >
                                 <Copy className="w-3 h-3" />
                               </Button>
                             </div>
-
-                            {/* Token Balances Display
+                            {/* Aptos actions */}
                             {(() => {
-                              // Get all EVM chain tokens from multiChainData
-                              const evmChains = ['ETHEREUM', 'BASE', 'BSC', 'POLYGON', 'ARBITRUM', 'OPTIMISM'];
-                              const allTokens = new Map();
-                              
-                              // Aggregate tokens across all EVM chains
-                              evmChains.forEach(chain => {
-                                const chainData = multiChainData?.chains?.[chain];
-                                if (chainData?.tokenBalances) {
-                                  chainData.tokenBalances.forEach(token => {
-                                    const key = token.symbol;
-                                    if (allTokens.has(key)) {
-                                      const existing = allTokens.get(key);
-                                      existing.uiAmount += token.uiAmount;
-                                      existing.value += token.value;
-                                    } else {
-                                      allTokens.set(key, { ...token });
-                                    }
-                                  });
-                                }
-                              });
-                              
-                              const topTokens = Array.from(allTokens.values())
-                                .sort((a, b) => b.value - a.value)
-                                .slice(0, 3);
-                              
-                              return topTokens.length > 0 && (
-                                <div className="mb-3 space-y-1">
-                                  <div className="text-xs text-gray-400 mb-1">Top Holdings:</div>
-                                  {topTokens.map((token, index) => (
-                                    <div key={`${token.symbol}-${index}`} className="flex justify-between items-center text-xs">
-                                      <span className="text-gray-300">{token.symbol}</span>
-                                      <div className="text-right">
-                                        <div className="text-white">{token.uiAmount.toFixed(4)}</div>
-                                        <div className="text-gray-400">${token.value.toFixed(2)}</div>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              );
-                            })()} */}
-
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  handleDeposit(
-                                    "ETH",
-                                    walletBalances.eth.address
-                                  )
-                                }
-                                className="flex-1 text-xs bg-green-900/30 text-green-400 border-green-700 hover:bg-green-900/50"
-                              >
-                                <ArrowDownToLine className="w-3 h-3 mr-1" />
-                                Deposit
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  handleWithdraw(
-                                    "ETH",
-                                    walletBalances.eth.address
-                                  )
-                                }
-                                className="flex-1 text-xs bg-[#ADFEB9]/30 text-[#ADFEB9] border-[#ADFEB9] hover:bg-[#ADFEB9]/50"
-                              >
-                                <ArrowUpFromLine className="w-3 h-3 mr-1" />
-                                Withdraw
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Solana Wallet Section */}
-                        {walletBalances.sol.exists && (
-                          <div className="p-3 border-b border-gray-800">
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
-                                  <span className="text-white text-xs font-bold">
-                                    S
-                                  </span>
-                                </div>
-                                <span className="text-white font-medium">
-                                  Solana
-                                </span>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-white font-medium">
-                                  ${walletBalances.sol.usdValue.toFixed(2)}
-                                </div>
-                                <div className="text-gray-400 text-xs">
-                                  Total value
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center justify-between mb-3">
-                              <span className="text-gray-400 text-sm font-mono">
-                                {walletBalances.sol.address.slice(0, 6)}...
-                                {walletBalances.sol.address.slice(-4)}
-                              </span>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() =>
-                                  handleCopyAddress(
-                                    walletBalances.sol.address,
-                                    "SOL"
-                                  )
-                                }
-                                className="text-gray-400 hover:text-white p-1"
-                              >
-                                <Copy className="w-3 h-3" />
-                              </Button>
-                            </div>
-
-                            {/* Token Balances Display */}
-                            {(() => {
-                              // multiChainData is now tokensChains structure
-                              const tokensData = multiChainData as any;
-                              if (!tokensData || !tokensData.chains)
-                                return null;
-
-                              const solanaChain = tokensData.chains.find(
-                                (chain: any) => chain.name === "Solana"
-                              );
-                              const topTokens = solanaChain?.tokens
-                                ? [...solanaChain.tokens]
-                                    .sort((a: any, b: any) => b.value - a.value)
-                                    .slice(0, 3)
-                                : [];
-
+                              const addrRedux = (walletBalances as any).aptos?.address as string | undefined;
+                              let addr = addrRedux;
+                              if (!addr && Array.isArray(user?.wallets)) {
+                                const w = (user!.wallets as { addressFormat?: string; address?: string }[]).find(
+                                  (x) => x.addressFormat === "ADDRESS_FORMAT_APTOS"
+                                );
+                                addr = w?.address;
+                              }
+                              if (!addr) return null;
                               return (
-                                topTokens.length > 0 && (
-                                  <div className="mb-3 space-y-1">
-                                    <div className="text-xs text-gray-400 mb-1">
-                                      Top Holdings:
-                                    </div>
-                                    {topTokens.map(
-                                      (token: any, index: number) => (
-                                        <div
-                                          key={`${token.symbol}-${index}`}
-                                          className="flex justify-between items-center text-xs"
-                                        >
-                                          <span className="text-gray-300">
-                                            {token.symbol}
-                                          </span>
-                                          <div className="text-right">
-                                            <div className="text-white">
-                                              {token.balance.toFixed(4)}
-                                            </div>
-                                            <div className="text-gray-400">
-                                              ${token.value.toFixed(2)}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      )
-                                    )}
-                                  </div>
-                                )
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleDeposit("APTOS", addr!)}
+                                    className="flex-1 text-xs bg-green-900/30 text-green-400 border-green-700 hover:bg-green-900/50"
+                                  >
+                                    <ArrowDownToLine className="w-3 h-3 mr-1" />
+                                    Deposit
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleWithdraw("APTOS", addr!)}
+                                    className="flex-1 text-xs bg-[#ADFEB9]/30 text-[#ADFEB9] border-[#ADFEB9] hover:bg-[#ADFEB9]/50"
+                                  >
+                                    <ArrowUpFromLine className="w-3 h-3 mr-1" />
+                                    Withdraw
+                                  </Button>
+                                </div>
                               );
                             })()}
-
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  handleDeposit(
-                                    "SOL",
-                                    walletBalances.sol.address
-                                  )
-                                }
-                                className="flex-1 text-xs bg-green-900/30 text-green-400 border-green-700 hover:bg-green-900/50"
-                              >
-                                <ArrowDownToLine className="w-3 h-3 mr-1" />
-                                Deposit
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  handleWithdraw(
-                                    "SOL",
-                                    walletBalances.sol.address
-                                  )
-                                }
-                                className="flex-1 text-xs bg-[#ADFEB9]/30 text-[#ADFEB9] border-[#ADFEB9] hover:bg-[#ADFEB9]/50"
-                              >
-                                <ArrowUpFromLine className="w-3 h-3 mr-1" />
-                                Withdraw
-                              </Button>
-                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-3">
+                            <Button
+                              onClick={handleCreateAptosWallet}
+                              disabled={isCreatingWallet}
+                              className="w-full text-white bg-gray-800 hover:bg-gray-700 border border-gray-600"
+                              variant="outline"
+                            >
+                              <Plus className="w-4 h-4 mr-2" />
+                              {isCreatingWallet ? "Creating..." : "Create APTOS Wallet"}
+                            </Button>
                           </div>
                         )}
 
-                        {/* Create SUI Wallet Option */}
-                        <div className="p-3">
-                          <Button
-                            onClick={handleCreateSuiWallet}
-                            disabled={isCreatingWallet}
-                            className="w-full text-white bg-gray-800 hover:bg-gray-700 border border-gray-600"
-                            variant="outline"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            {isCreatingWallet
-                              ? "Creating..."
-                              : "Create SUI Wallet"}
-                          </Button>
-                        </div>
-
-                        {/* Create APTOS Wallet Option */}
-                        <div className="p-3 pt-0">
-                          <Button
-                            onClick={handleCreateAptosWallet}
-                            disabled={isCreatingWallet}
-                            className="w-full text-white bg-gray-800 hover:bg-gray-700 border border-gray-600"
-                            variant="outline"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            {isCreatingWallet
-                              ? "Creating..."
-                              : "Create APTOS Wallet"}
-                          </Button>
-                        </div>
-
-                        {/* Wallet Creation Options for missing wallets */}
+                        {/* Refresh Balances Only */}
                         <div className="p-2 border-t border-gray-800 space-y-1">
-                          {!walletBalances.eth.exists && (
-                            <DropdownMenuItem
-                              onClick={handleCreateEthereumWallet}
-                              disabled={isCreatingWallet}
-                              className="text-white hover:bg-gray-800"
-                            >
-                              <Plus className="w-4 h-4 mr-2" />
-                              {isCreatingWallet
-                                ? "Creating..."
-                                : "Create EVM Wallet"}
-                            </DropdownMenuItem>
-                          )}
-
-                          {!walletBalances.sol.exists && (
-                            <DropdownMenuItem
-                              onClick={handleCreateSolanaWallet}
-                              disabled={isCreatingWallet}
-                              className="text-white hover:bg-gray-800"
-                            >
-                              <Plus className="w-4 h-4 mr-2" />
-                              {isCreatingWallet
-                                ? "Creating..."
-                                : "Create SOL Wallet"}
-                            </DropdownMenuItem>
-                          )}
-
-                          {/* Refresh Balances Option */}
                           <DropdownMenuItem
                             onClick={() => refreshAllData()}
                             disabled={isRefreshing || isLoadingWallets}
                             className="text-blue-400 hover:bg-gray-800"
                           >
-                            <RefreshCw
-                              className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
-                            />
-                            {isRefreshing
-                              ? "Refreshing..."
-                              : "Refresh Balances"}
+                            <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+                            {isRefreshing ? "Refreshing..." : "Refresh Balances"}
                           </DropdownMenuItem>
                         </div>
                       </>
