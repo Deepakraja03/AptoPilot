@@ -18,18 +18,18 @@ const asyncHandler =
   (
     fn: (req?: NextRequest, res?: NextResponse) => Promise<NextResponse | void>
   ) =>
-  (req?: NextRequest, res?: NextResponse) => {
-    return Promise.resolve(fn(req, res)).catch((error) => {
-      console.error("Error in turnkey controller:", error);
-      return NextResponse.json(
-        {
-          success: false,
-          error: error?.message || "Internal server error",
-        },
-        { status: 500 }
-      );
-    });
-  };
+    (req?: NextRequest, res?: NextResponse) => {
+      return Promise.resolve(fn(req, res)).catch((error) => {
+        console.error("Error in turnkey controller:", error);
+        return NextResponse.json(
+          {
+            success: false,
+            error: error?.message || "Internal server error",
+          },
+          { status: 500 }
+        );
+      });
+    };
 
 /**
  * -----------------------------------------------
@@ -183,8 +183,8 @@ export const getUser = asyncHandler(async (req?: NextRequest) => {
 export const createUser = asyncHandler(async (req?: NextRequest) => {
   const body =
     typeof req?.body === "object" &&
-    req?.body !== null &&
-    "userName" in req?.body
+      req?.body !== null &&
+      "userName" in req?.body
       ? req?.body
       : await req?.json();
   const { userName, userEmail, publicKey, apiKeyName } = body;
@@ -274,8 +274,8 @@ export const updateUser = asyncHandler(async (req?: NextRequest) => {
   const userId = pathParts[pathParts.length - 1];
   const body =
     typeof req?.body === "object" &&
-    req?.body !== null &&
-    "userName" in req?.body
+      req?.body !== null &&
+      "userName" in req?.body
       ? req?.body
       : await req?.json();
   const { userName } = body;
@@ -390,8 +390,8 @@ export const deleteUser = asyncHandler(async (req?: NextRequest) => {
 export const createApiKey = asyncHandler(async (req?: NextRequest) => {
   const body =
     typeof req?.body === "object" &&
-    req?.body !== null &&
-    "apiKeyName" in req?.body
+      req?.body !== null &&
+      "apiKeyName" in req?.body
       ? req?.body
       : await req?.json();
   const {
@@ -1268,11 +1268,25 @@ export const signRawPayload = asyncHandler(async (req?: NextRequest) => {
     hashFunction
   );
 
+  console.log("Turnkey signRawPayload response:", JSON.stringify(signNextResponse, null, 2));
+
+  let signature = signNextResponse.signature;
+
+  // Check if signature is in activity result
+  if (!signature && signNextResponse.activity?.result?.signRawPayloadResult) {
+    signature = signNextResponse.activity.result.signRawPayloadResult.signature;
+  }
+
+  // If still no signature, check if it's in a different format (e.g. r, s)
+  if (!signature && signNextResponse.r && signNextResponse.s) {
+    signature = `${signNextResponse.r}${signNextResponse.s}`;
+  }
+
   return NextResponse.json(
     {
       success: true,
       message: "Payload signed successfully",
-      signature: signNextResponse.signature,
+      signature: signature,
     },
     { status: 200 }
   );

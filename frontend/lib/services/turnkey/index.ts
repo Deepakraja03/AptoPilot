@@ -265,9 +265,9 @@ class TurnkeyService {
         apiKeyName: string;
         publicKey: string;
         curveType:
-          | "API_KEY_CURVE_P256"
-          | "API_KEY_CURVE_SECP256K1"
-          | "API_KEY_CURVE_ED25519";
+        | "API_KEY_CURVE_P256"
+        | "API_KEY_CURVE_SECP256K1"
+        | "API_KEY_CURVE_ED25519";
         expirationSeconds?: string;
       }>;
       authenticators: Array<{
@@ -376,9 +376,9 @@ class TurnkeyService {
         apiKeyName: string;
         publicKey: string;
         curveType:
-          | "API_KEY_CURVE_SECP256K1"
-          | "API_KEY_CURVE_P256"
-          | "API_KEY_CURVE_ED25519";
+        | "API_KEY_CURVE_SECP256K1"
+        | "API_KEY_CURVE_P256"
+        | "API_KEY_CURVE_ED25519";
         expirationSeconds?: string;
       }>;
       authenticators: Array<{
@@ -708,9 +708,9 @@ class TurnkeyService {
       apiKeyName: string;
       publicKey: string;
       curveType:
-        | "API_KEY_CURVE_P256"
-        | "API_KEY_CURVE_SECP256K1"
-        | "API_KEY_CURVE_ED25519";
+      | "API_KEY_CURVE_P256"
+      | "API_KEY_CURVE_SECP256K1"
+      | "API_KEY_CURVE_ED25519";
       expirationSeconds?: string;
     }>
   ): Promise<any> {
@@ -1181,7 +1181,7 @@ class TurnkeyService {
   async signTransaction(
     signWith: string,
     unsignedTransaction: string,
-    type: "TRANSACTION_TYPE_ETHEREUM" | "TRANSACTION_TYPE_SOLANA"
+    type: "TRANSACTION_TYPE_ETHEREUM" | "TRANSACTION_TYPE_SOLANA" | "TRANSACTION_TYPE_APTOS"
   ): Promise<any> {
     try {
       const response = await apiClient.signTransaction({
