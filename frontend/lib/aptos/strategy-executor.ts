@@ -15,7 +15,18 @@ import { AptosIntent } from "./intent-parser";
 
 // Configuration
 const APTOS_NETWORK = (process.env.NEXT_PUBLIC_APTOS_NETWORK || 'testnet') as Network;
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0x123';
+
+function normalizeAddress(addr: string): string {
+  const hex = (addr || '').toLowerCase().replace(/^0x/, '');
+  if (!/^[0-9a-f]*$/.test(hex)) throw new Error(`Invalid hex address provided: ${addr}`);
+  const padded = hex.padStart(64, '0');
+  return `0x${padded}`;
+}
+
+const CONTRACT_ADDRESS = normalizeAddress(
+  process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
+  '0x649c0a6a035ba145736761a8d0cbce4c6f3bb188b013518d77aac3c18ae3b35d'
+);
 
 // Type for the signRawPayload function
 type SignRawPayload = (payload: {
@@ -61,7 +72,7 @@ async function signAndSubmitTransaction(
 type InputEntryFunctionData = {
   function: `${string}::${string}::${string}`;
   typeArguments: string[];
-  functionArguments: (string | number | boolean)[];
+  functionArguments: (string | number | boolean | Uint8Array)[];
 };
 
 // Initialize Aptos client
@@ -121,7 +132,7 @@ const APTOS_CONFIG = {
 // Payload builders for strategy management
 function buildPauseStrategyPayload(strategyId: number): InputEntryFunctionData {
   return {
-    function: `${CONTRACT_ADDRESS}::strategy::pause_strategy`,
+    function: `${CONTRACT_ADDRESS}::strategy_registry::pause_strategy`,
     typeArguments: [],
     functionArguments: [strategyId.toString()]
   };
@@ -129,7 +140,7 @@ function buildPauseStrategyPayload(strategyId: number): InputEntryFunctionData {
 
 function buildResumeStrategyPayload(strategyId: number): InputEntryFunctionData {
   return {
-    function: `${CONTRACT_ADDRESS}::strategy::resume_strategy`,
+    function: `${CONTRACT_ADDRESS}::strategy_registry::resume_strategy`,
     typeArguments: [],
     functionArguments: [strategyId.toString()]
   };
@@ -137,7 +148,7 @@ function buildResumeStrategyPayload(strategyId: number): InputEntryFunctionData 
 
 function buildCancelStrategyPayload(strategyId: number): InputEntryFunctionData {
   return {
-    function: `${CONTRACT_ADDRESS}::strategy::cancel_strategy`,
+    function: `${CONTRACT_ADDRESS}::strategy_registry::cancel_strategy`,
     typeArguments: [],
     functionArguments: [strategyId.toString()]
   };
@@ -145,15 +156,23 @@ function buildCancelStrategyPayload(strategyId: number): InputEntryFunctionData 
 
 // Generic strategy creation payload
 function buildCreateStrategyPayload(
-  strategyType: string,
+  strategyTypeU8: number,
   paramsJson: string,
   intervalSeconds: number,
   maxExecutions: number
 ): InputEntryFunctionData {
+  // Encode JSON params to vector<u8>
+  const encoder = new TextEncoder();
+  const paramsBytes = encoder.encode(paramsJson);
   return {
-    function: `${CONTRACT_ADDRESS}::strategy::create_strategy`,
+    function: `${CONTRACT_ADDRESS}::strategy_registry::create_strategy`,
     typeArguments: [],
-    functionArguments: [strategyType, paramsJson, intervalSeconds, maxExecutions]
+    functionArguments: [
+      strategyTypeU8,
+      paramsBytes,
+      intervalSeconds,
+      maxExecutions
+    ]
   };
 }
 
@@ -181,7 +200,7 @@ function buildSwapPayload(
   minAmountOut: number | bigint
 ): InputEntryFunctionData {
   return {
-    function: `${CONTRACT_ADDRESS}::dex::swap_exact_tokens_for_tokens`,
+    function: `${CONTRACT_ADDRESS}::dex_router::swap_exact_tokens_for_tokens`,
     typeArguments: [fromType, toType],
     functionArguments: [amountIn.toString(), minAmountOut.toString()]
   };
@@ -324,8 +343,11 @@ async function buildYieldStrategyPayload(
     // Check interval: daily for yield optimization
     const intervalSeconds = 86400; // 24 hours
 
+    // Strategy type mapping (u8)
+    const typeCode = 3; // STRATEGY_TYPE_YIELD_OPT per Move module
+
     return buildCreateStrategyPayload(
-        APTOS_CONFIG.strategyTypes.YIELD_OPT,
+        typeCode,
         JSON.stringify(params),
         intervalSeconds,
         0 // unlimited executions
@@ -347,8 +369,9 @@ async function buildDCAStrategyPayload(
 
     const intervalSeconds = intent.parameters?.interval || 86400;
 
+    const typeCode = 1; // STRATEGY_TYPE_DCA per Move module
     return buildCreateStrategyPayload(
-        APTOS_CONFIG.strategyTypes.DCA,
+        typeCode,
         JSON.stringify(params),
         intervalSeconds,
         0 // unlimited executions
