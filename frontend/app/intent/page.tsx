@@ -114,7 +114,7 @@ export default function IntentPage() {
 
   // Aptos State
   const [aptosAddress, setAptosAddress] = useState<string | null>(null);
-  const [aptosPublicKey, setAptosPublicKey] = useState<any>(null);
+  const [aptosPublicKey, setAptosPublicKey] = useState<string | null>(null);
   const [aptBalance, setAptBalance] = useState(0);
   const [aptosStrategies, setAptosStrategies] = useState<any[]>([]);
 
@@ -176,14 +176,8 @@ export default function IntentPage() {
     }
   }, [user, router]);
 
-  // Load wallet accounts when user is available
-  React.useEffect(() => {
-    if (user?.wallets && user.wallets.length > 0) {
-      loadWalletAccounts();
-    }
-  }, [user?.wallets]);
-
-  const loadWalletAccounts = async () => {
+  // Memoize loader to satisfy hook dependency and avoid stale closures
+  const loadWalletAccounts = React.useCallback(async () => {
     if (!user?.wallets || user.wallets.length === 0) return;
 
     setIsLoadingAccounts(true);
@@ -232,7 +226,16 @@ export default function IntentPage() {
     } finally {
       setIsLoadingAccounts(false);
     }
-  };
+  }, [user?.wallets, getWalletAccounts]);
+
+  // Load wallet accounts when user is available
+  React.useEffect(() => {
+    if (user?.wallets && user.wallets.length > 0) {
+      loadWalletAccounts();
+    }
+  }, [user?.wallets, loadWalletAccounts]);
+
+  // (moved into useCallback above)
 
   const getWalletAddress = (chain: string): string | null => {
     const chainType = chain === "solana" ? "solana" : "ethereum";
@@ -647,7 +650,7 @@ You can try again with a new swap request.`,
               <br />
               <span
                 style={{ fontFamily: "var(--font-instrument-serif)" }}
-                className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600 italic"
+                className="text-transparent bg-clip-text bg-gradient-to-r from-[#ADFEB9] to-emerald-300 italic"
               >
                 powerful strategies.
               </span>
@@ -663,34 +666,34 @@ You can try again with a new swap request.`,
             </motion.p>
           </div>
 
-          <div className="rounded-2xl border w-full border-orange-900/20 bg-gradient-to-b from-zinc-900/30 to-black p-8 overflow-hidden shadow-[0_0_25px_rgba(0,0,0,0.3)]">
+          <div className="rounded-2xl border w-full border-[#ADFEB9]/20 bg-gradient-to-b from-zinc-900/30 to-black p-8 overflow-hidden shadow-[0_0_25px_rgba(0,0,0,0.3)]">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="flex-1">
                 <div>
                   <div className="relative">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-orange-600/10 to-orange-900/10 rounded-xl blur-xl"></div>
+                    <div className="absolute -inset-1 bg-gradient-to-r from-[#ADFEB9]/10 to-emerald-900/10 rounded-xl blur-xl"></div>
                     <div className="relative h-[800px]">
                       <div className="lg:col-span-2">
                         <Card className="border-gray-800 bg-gray-900/30 h-[800px] flex flex-col">
                           <CardHeader>
-                            <CardTitle className="text-orange-500 border-b flex items-center gap-2">
+                            <CardTitle className="text-[#ADFEB9] border-b flex items-center gap-2">
                               {" "}
                               <motion.h2
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.5 }}
-                                className="text-xl md:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600 mb-6"
+                                className="text-xl md:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-[#ADFEB9] to-emerald-300 mb-6"
                                 style={{
                                   fontFamily: "var(--font-instrument-serif)",
                                 }}
                               >
                                 <div className="flex items-center gap-2">
-                                  <span className="text-orange-500 animate-pulse">
+                                  <span className="text-[#ADFEB9] animate-pulse">
                                     •
                                   </span>
                                   <GlitchText
-                                    text="IntentiFi Agent"
-                                    className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600 hover:cursor-pointer"
+                                    text="AptoPilot Agent"
+                                    className="text-transparent bg-clip-text bg-gradient-to-r from-[#ADFEB9] to-emerald-300 hover:cursor-pointer"
                                   />
                                 </div>
                               </motion.h2>
@@ -715,7 +718,7 @@ You can try again with a new swap request.`,
                                     >
                                       <div
                                         className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === "user"
-                                          ? "bg-orange-600"
+                                          ? "bg-[#ADFEB9]"
                                           : "bg-gray-700"
                                           }`}
                                       >
@@ -727,7 +730,7 @@ You can try again with a new swap request.`,
                                       </div>
                                       <div
                                         className={`rounded-lg p-3 min-w-0 break-words overflow-hidden ${message.role === "user"
-                                          ? "bg-orange-600 text-white"
+                                          ? "bg-[#ADFEB9] text-black"
                                           : "bg-gray-800 text-gray-100"
                                           }`}
                                       >
@@ -738,7 +741,7 @@ You can try again with a new swap request.`,
                                         {/* Swap Intent Display */}
                                         {message.swapIntent && (
                                           <div className="mt-2 p-2 bg-gray-700/50 rounded text-xs">
-                                            <p className="font-semibold text-orange-400">
+                                            <p className="font-semibold text-[#ADFEB9]">
                                               Swap Intent Detected:
                                             </p>
                                             <p className="break-words">
@@ -843,7 +846,7 @@ You can try again with a new swap request.`,
                                   isExecutingSwap ||
                                   !inputMessage.trim()
                                 }
-                                className="bg-orange-600 hover:bg-orange-700 flex-shrink-0"
+                                className="bg-[#ADFEB9] hover:bg-[#ADFEB9]/90 text-black flex-shrink-0"
                               >
                                 <Send className="w-4 h-4" />
                               </Button>
@@ -954,7 +957,7 @@ You can try again with a new swap request.`,
 
                   {aptosStrategies.length === 0 ? (
                     <p className="text-sm text-gray-400">
-                      No active strategies. Try: "I want safe yield on my APT token"
+                      No active strategies. Try: &quot;I want safe yield on my APT token&quot;
                     </p>
                   ) : (
                     <div className="space-y-3">

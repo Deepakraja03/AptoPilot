@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { siteConfig } from "@/lib/utils/site-config";
 
 export const metadata: Metadata = {
-  title: "Intent Creation | Natural Language DeFi Automation | IntentiFi",
+  title: "Intent Creation | Natural Language DeFi Automation | AptoPilot",
   description:
-    "Create automated DeFi strategies using natural language. Tell IntentiFi what you want to achieve and let AI execute complex cross-chain transactions for you.",
+    "Create automated DeFi strategies using natural language. Tell AptoPilot what you want to achieve and let AI execute complex cross-chain transactions for you.",
   keywords: [
     "Intent Creation",
     "Natural Language DeFi",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     "AI Financial Assistant",
   ],
   openGraph: {
-    title: "IntentiFi Intent Creation - Natural Language DeFi Automation",
+    title: "AptoPilot Intent Creation - Natural Language DeFi Automation",
     description:
       "Create automated DeFi strategies using simple natural language commands. AI-powered cross-chain execution made simple.",
     url: `${siteConfig.url}/intent`,
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         url: `${siteConfig.url}/og-intent.jpg`,
         width: 1200,
         height: 630,
-        alt: "IntentiFi Intent Creation - Natural Language DeFi",
+        alt: "AptoPilot Intent Creation - Natural Language DeFi",
       },
     ],
     locale: "en_US",
@@ -44,10 +44,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Create DeFi Intents with Natural Language | IntentiFi",
+    title: "Create DeFi Intents with Natural Language | AptoPilot",
     description:
       "Turn your DeFi ideas into automated strategies using simple commands.",
-    creator: "@IntentiFinance",
+    creator: "@AptoPilot",
     images: [`${siteConfig.url}/twitter-intent.jpg`],
   },
   alternates: {
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
 export const intentStructuredData = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "IntentiFi Intent Engine",
+  name: "AptoPilot Intent Engine",
   description:
     "Natural language interface for creating automated DeFi strategies",
   url: `${siteConfig.url}/intent`,
@@ -85,7 +85,7 @@ export const intentStructuredData = {
   },
   provider: {
     "@type": "Organization",
-    name: "IntentiFi",
+    name: "AptoPilot",
     url: siteConfig.url,
   },
   potentialAction: {

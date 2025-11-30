@@ -66,15 +66,15 @@ export default function RegisterPage() {
         <div className="w-full max-w-md">
           <div className="bg-gray-900/30 border border-gray-800 rounded-2xl p-8 shadow-2xl text-center">
             <div className="flex justify-center mb-8">
-              <div className="w-24 h-24 bg-[#FA4C15]/10 rounded-full flex items-center justify-center border border-[#FA4C15]/20">
-                <BiCheck className="h-12 w-12 text-[#FA4C15]" />
+              <div className="w-24 h-24 bg-[#ADFEB9]/10 rounded-full flex items-center justify-center border border-[#ADFEB9]/20">
+                <BiCheck className="h-12 w-12 text-[#ADFEB9]" />
               </div>
             </div>
             <h1 className="text-3xl font-light text-white mb-2">
               Registration{" "}
               <span
                 style={{ fontFamily: "InstrumentSerif" }}
-                className="text-[#FA4C15] italic"
+                className="text-[#ADFEB9] italic"
               >
                 Successful!
               </span>
@@ -85,7 +85,7 @@ export default function RegisterPage() {
             </p>
             <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-[#FA4C15] to-orange-500 h-3 rounded-full animate-pulse"
+                className="bg-gradient-to-r from-[#ADFEB9] to-emerald-300 h-3 rounded-full animate-pulse"
                 style={{ width: "100%" }}
               ></div>
             </div>
@@ -104,7 +104,7 @@ export default function RegisterPage() {
             <div className="relative">
               <Image
                 src="/logo.svg"
-                alt="IntentiFi Logo"
+                alt="AptoPilot Logo"
                 width={80}
                 height={80}
                 className="w-20 h-20"
@@ -119,7 +119,7 @@ export default function RegisterPage() {
               className="text-[#ADFEB9] italic"
             >
               <GlitchText
-                text="IntentiFi"
+                text="AptoPilot"
                 className="text-[#ADFEB9] hover:cursor-pointer"
               />
             </span>

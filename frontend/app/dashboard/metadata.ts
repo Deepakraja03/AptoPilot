@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title:
     "DeFi Dashboard | Real-Time Portfolio Analytics & Cross-Chain Management",
   description:
-    "Monitor your DeFi portfolio across multiple blockchains with real-time analytics, yield tracking, and automated strategy management on IntentiFi.",
+    "Monitor your DeFi portfolio across multiple blockchains with real-time analytics, yield tracking, and automated strategy management on AptoPilot.",
   keywords: [
     "DeFi Dashboard",
     "Portfolio Analytics",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     "Web3 Portfolio Tracker",
   ],
   openGraph: {
-    title: "IntentiFi Dashboard - Real-Time DeFi Portfolio Analytics",
+    title: "AptoPilot Dashboard - Real-Time DeFi Portfolio Analytics",
     description:
       "Monitor and manage your DeFi investments across multiple blockchains with advanced analytics and automated strategies.",
     url: `${siteConfig.url}/dashboard`,
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
         url: `${siteConfig.url}/og-dashboard.jpg`,
         width: 1200,
         height: 630,
-        alt: "IntentiFi Dashboard - DeFi Portfolio Analytics",
+        alt: "AptoPilot Dashboard - DeFi Portfolio Analytics",
       },
     ],
     locale: "en_US",
@@ -42,10 +42,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "IntentiFi Dashboard - Real-Time DeFi Analytics",
+    title: "AptoPilot Dashboard - Real-Time DeFi Analytics",
     description:
       "Monitor your DeFi portfolio across multiple blockchains with real-time analytics.",
-    creator: "@IntentiFinance",
+    creator: "@AptoPilot",
     images: [`${siteConfig.url}/twitter-dashboard.jpg`],
   },
   alternates: {
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
 export const dashboardStructuredData = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "IntentiFi Dashboard",
+  name: "AptoPilot Dashboard",
   description: "Real-time DeFi portfolio analytics and management dashboard",
   url: `${siteConfig.url}/dashboard`,
   applicationCategory: "FinanceApplication",
@@ -77,7 +77,7 @@ export const dashboardStructuredData = {
   softwareVersion: "1.0",
   provider: {
     "@type": "Organization",
-    name: "IntentiFi",
+    name: "AptoPilot",
     url: siteConfig.url,
   },
 };

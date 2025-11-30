@@ -179,7 +179,7 @@ export default function LoginPage() {
               <div className="absolute -inset-3 bg-gradient-to-r from-[#ADFEB9]/20 to-white/20 rounded-full blur-xl z-0"></div>
               <Image
                 src="/logo.svg"
-                alt="IntentiFi Logo"
+                alt="AptoPilot Logo"
                 width={80}
                 height={80}
                 className="w-20 h-20 relative z-10"
@@ -194,7 +194,7 @@ export default function LoginPage() {
               className="text-[#ADFEB9] italic"
             >
               <GlitchText
-                text={step === "email" ? "IntentiFi" : "Email"}
+                text={step === "email" ? "AptoPilot" : "Email"}
                 className="text-[#ADFEB9] hover:cursor-pointer"
               />
             </span>
@@ -284,7 +284,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setWalletDialogOpen(true)}
                 variant="outline"
-                className="w-full h-14 border-gray-700 bg-gray-800/50 text-white hover:bg-gray-700 hover:border-[#FA4C15]/50 rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-base"
+                className="w-full h-14 border-gray-700 bg-gray-800/50 text-white hover:bg-gray-700 hover:border-[#ADFEB9]/50 rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-base"
                 disabled={isLoading}
               >
                 <BiWallet className="w-5 h-5 mr-2" />
@@ -308,7 +308,7 @@ export default function LoginPage() {
               {/* Email Display */}
               <div className="bg-gray-800/50 border border-gray-700 px-4 py-3 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <BiEnvelope className="h-5 w-5 text-[#FA4C15]" />
+                  <BiEnvelope className="h-5 w-5 text-[#ADFEB9]" />
                   <div>
                     <p className="text-sm text-gray-400">
                       Verification code sent to:
